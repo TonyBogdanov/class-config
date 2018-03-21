@@ -1,0 +1,6 @@
+parameters:
+    visibilityLevels: [public, protected]
+    annotationGroups: [todo, deprecated]
+    title: "ClassConfig Docs"
+    baseUrl: "https://tonybogdanov.github.io/class-config"
+    overwrite: true

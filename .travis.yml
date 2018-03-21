@@ -1,0 +1,21 @@
+dist: trusty
+
+language: php
+php:
+  - '7.1.3'
+  - '7.2'
+
+before_install:
+  - chmod +x ./bin/run-tests.sh
+  - chmod +x ./bin/run-tests-with-coverage.sh
+
+install:
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar install --dev --no-interaction
+
+script:
+  - mkdir -p build/logs
+  - ./bin/run-tests-with-coverage.sh
+
+after_success:
+  - travis_retry ./vendor/bin/php-coveralls -v
