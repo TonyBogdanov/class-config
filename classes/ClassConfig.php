@@ -10,6 +10,7 @@ use ClassConfig\Annotation\ConfigFloat;
 use ClassConfig\Annotation\ConfigInteger;
 use ClassConfig\Annotation\ConfigObject;
 use ClassConfig\Annotation\ConfigString;
+use ClassConfig\Exceptions\MissingCachePathException;
 use Doctrine\Common\Annotations\AnnotationReader;
 
 /**
@@ -32,6 +33,17 @@ class ClassConfig
      * @var string
      */
     protected static $classNamespace = 'ClassConfig\Cache';
+
+    /**
+     * @param string $path
+     */
+    protected static function createDirectories(string $path)
+    {
+        if (!is_dir($path)) {
+            static::createDirectories(dirname($path));
+            mkdir($path);
+        }
+    }
 
     /**
      * @return AnnotationReader
@@ -131,7 +143,7 @@ class ClassConfig
             ->generateMagicUnset();
 
         file_put_contents(
-            static::getCachePath() . '/' . $effectiveClassName . '.php',
+            static::getCachePath(true) . '/' . $effectiveClassName . '.php',
             (string) $generator
         );
 
@@ -147,11 +159,19 @@ class ClassConfig
     }
 
     /**
+     * @param bool $create
      * @return string
+     * @throws MissingCachePathException
      */
-    public static function getCachePath(): string
+    public static function getCachePath(bool $create = false): string
     {
-        return static::$cachePath ?: sys_get_temp_dir();
+        if (!isset(static::$cachePath)) {
+            throw new MissingCachePathException();
+        }
+        if ($create) {
+            static::createDirectories(static::$cachePath);
+        }
+        return static::$cachePath;
     }
 
     /**
@@ -175,6 +195,7 @@ class ClassConfig
      * @return string
      * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \ReflectionException
+     * @throws MissingCachePathException
      */
     public static function createClass(string $class): string
     {
@@ -201,6 +222,7 @@ class ClassConfig
      * @return AbstractConfig
      * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \ReflectionException
+     * @throws MissingCachePathException
      */
     public static function createInstance(string $class): AbstractConfig
     {
