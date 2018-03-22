@@ -30,7 +30,10 @@ use ClassConfig\Annotation\ConfigString;
  *          "deep_integer":     @ConfigInteger(default=123),
  *          "deep_config":      @Config({
  *              "deeper_float":     @ConfigFloat(default=123.456),
- *              "deeper_boolean":   @ConfigBoolean(default=true)
+ *              "deeper_boolean":   @ConfigBoolean(default=true),
+ *              "deeper_config":    @Config(
+ *                  {"deepest_string": @ConfigString()
+ *              })
  *          })
  *     }),
  *     "another_config":    @Config({

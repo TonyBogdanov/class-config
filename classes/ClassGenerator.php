@@ -399,6 +399,28 @@ class ClassGenerator
 
     /**
      * @param string $name
+     * @param string $type
+     * @return ClassGenerator
+     */
+    public function generateConfigGet(string $name, string $type): ClassGenerator
+    {
+        $this->class
+            ->addMethod(static::camelCase('get_' . $name))
+            ->addComment(
+                '@return null|' . $this->getCommentTypeHint($type)
+            )->setReturnType($this->getTypeHint($type))
+            ->setBody(
+                'if (!isset($this->__' . $name . '__[0])) {' . PHP_EOL .
+                '    $this->__' . $name . '__[0] = new ' . $this->getCommentTypeHint($type) . '($this, \'' . $name .
+                '\');' . PHP_EOL .
+                '}' . PHP_EOL .
+                'return $this->__' . $name . '__[0];'
+            );
+        return $this;
+    }
+
+    /**
+     * @param string $name
      * @return ClassGenerator
      */
     public function generateConfigSet(string $name): ClassGenerator

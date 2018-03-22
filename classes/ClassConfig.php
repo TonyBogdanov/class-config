@@ -110,7 +110,7 @@ class ClassConfig
                     );
                     $generator
                         ->generateProperty($key, $entryCanonicalClassName)
-                        ->generateGet($key, $entryCanonicalClassName)
+                        ->generateConfigGet($key, $entryCanonicalClassName)
                         ->generateConfigSet($key)
                         ->generateConfigIsset($key)
                         ->generateConfigUnset($key);
