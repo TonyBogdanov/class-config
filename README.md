@@ -21,6 +21,15 @@ Install via [Composer](https://getcomposer.org):
 composer require tonybogdanov/class-config
 ```
 
+Until [`doctrine/annotations`](https://github.com/doctrine/annotations) reaches version `2.0` you'll need to manually register the composer autoloader with the annotations registry:
+
+```php
+$loader = include 'vendor/autoload.php';
+\Doctrine\Common\Annotations\AnnotationRegistry::registerLoader([$loader, 'loadClass']);
+```
+
+You can also try [`indigophp/doctrine-annotation-autoload`](https://github.com/indigophp/doctrine-annotation-autoload) to do it automatically, but I couldn't make it work with Travis.
+
 ## Testing
 
 Run the tests:

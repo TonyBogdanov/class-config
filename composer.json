@@ -4,7 +4,7 @@
     "type": "library",
     "require": {
         "php" : "^7.1",
-        "doctrine/annotations": "1.6",
+        "doctrine/annotations": "^1.6",
         "nette/php-generator": "3.1"
     },
     "require-dev": {
