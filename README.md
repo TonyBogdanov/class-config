@@ -21,14 +21,20 @@ Install via [Composer](https://getcomposer.org):
 composer require tonybogdanov/class-config
 ```
 
-Until [`doctrine/annotations`](https://github.com/doctrine/annotations) reaches version `2.0` you'll need to manually register the composer autoloader with the annotations registry:
+## Configuration
+
+Configure the library by calling `ClassConfig::register()`, choosing a cache directory, cache strategy and optionally a config class namespace, once and only once prior to using any of the features.
+
+Add an autoload PSR-4 entry in `composer.json` and point the `ClassConfig\Cache\` namespace (or the one you've configured) to the cache folder you chose.
+
+Until [`doctrine/annotations`](https://github.com/doctrine/annotations) reaches version `2.0` you'll also need to manually register the composer autoloader with the annotations' registry:
 
 ```php
 $loader = include 'vendor/autoload.php';
 \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader([$loader, 'loadClass']);
 ```
 
-You can also try [`indigophp/doctrine-annotation-autoload`](https://github.com/indigophp/doctrine-annotation-autoload) to do it automatically, but I couldn't make it work with Travis.
+Alternatively you can try [`indigophp/doctrine-annotation-autoload`](https://github.com/indigophp/doctrine-annotation-autoload).
 
 ## Testing
 
@@ -39,6 +45,10 @@ Run the tests:
 ```
 
 [Check the Coverage](https://tonybogdanov.github.io/class-config/coverage/).
+
+## Usage
+
+TODO
 
 ## API Docs
 

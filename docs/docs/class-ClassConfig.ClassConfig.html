@@ -129,7 +129,7 @@
     <td class="name">
         <div>
             <a class="anchor pull-right" href="#_createDirectories">#</a>
-            <code><a href="source-class-ClassConfig.ClassConfig.html#91-97">createDirectories</a>( <span> string <span class="property-name">$path</span> </span> )</code>
+            <code><a href="source-class-ClassConfig.ClassConfig.html#77-83">createDirectories</a>( <span> string <span class="property-name">$path</span> </span> )</code>
 
             <div class="description">
                 
@@ -161,7 +161,7 @@
     <td class="name">
         <div>
             <a class="anchor pull-right" href="#_getAnnotationReader">#</a>
-            <code><a href="source-class-ClassConfig.ClassConfig.html#105-111">getAnnotationReader</a>( )</code>
+            <code><a href="source-class-ClassConfig.ClassConfig.html#91-97">getAnnotationReader</a>( )</code>
 
             <div class="description">
                 Lazy getter for the annotation reader.
@@ -193,7 +193,7 @@
     <td class="name">
         <div>
             <a class="anchor pull-right" href="#_getCachePath">#</a>
-            <code><a href="source-class-ClassConfig.ClassConfig.html#120-126">getCachePath</a>( )</code>
+            <code><a href="source-class-ClassConfig.ClassConfig.html#106-112">getCachePath</a>( )</code>
 
             <div class="description">
                 Getter for the registered cache path.
@@ -227,7 +227,7 @@ Throws a ClassConfigNotRegisteredException if register() wasn't called prior.
     <td class="name">
         <div>
             <a class="anchor pull-right" href="#_getClassNamespace">#</a>
-            <code><a href="source-class-ClassConfig.ClassConfig.html#135-141">getClassNamespace</a>( )</code>
+            <code><a href="source-class-ClassConfig.ClassConfig.html#121-127">getClassNamespace</a>( )</code>
 
             <div class="description">
                 Getter for the registered class namespace.
@@ -261,7 +261,7 @@ Throws a ClassConfigNotRegisteredException if register() wasn't called prior.
     <td class="name">
         <div>
             <a class="anchor pull-right" href="#_generate">#</a>
-            <code><a href="source-class-ClassConfig.ClassConfig.html#153-251">generate</a>( <span> <a href="class-ClassConfig.Annotation.Config.html">ClassConfig\Annotation\Config</a> <span class="property-name">$annotation</span> </span>, <span> string <span class="property-name">$className</span> </span>, <span> string <span class="property-name">$classNamespace</span> </span>, <span> string <span class="property-name">$targetClassNamespace</span> </span>, <span> string <span class="property-name">$targetCanonicalClassName</span> </span>, <span> int <span class="property-name">$time</span> </span>, <span> int <span class="property-name">&amp; $subClassIteration</span> = <span class="php-num">0</span></span> )</code>
+            <code><a href="source-class-ClassConfig.ClassConfig.html#139-241">generate</a>( <span> <a href="class-ClassConfig.Annotation.Config.html">ClassConfig\Annotation\Config</a> <span class="property-name">$annotation</span> </span>, <span> string <span class="property-name">$className</span> </span>, <span> string <span class="property-name">$classNamespace</span> </span>, <span> string <span class="property-name">$targetClassNamespace</span> </span>, <span> string <span class="property-name">$targetCanonicalClassName</span> </span>, <span> int <span class="property-name">$time</span> </span>, <span> int <span class="property-name">&amp; $subClassIteration</span> = <span class="php-num">0</span></span> )</code>
 
             <div class="description">
                 
@@ -293,7 +293,7 @@ Throws a ClassConfigNotRegisteredException if register() wasn't called prior.
     <td class="name">
         <div>
             <a class="anchor pull-right" href="#_register">#</a>
-            <code><a href="source-class-ClassConfig.ClassConfig.html#261-307">register</a>( <span> string <span class="property-name">$cachePath</span> </span>, <span> int <span class="property-name">$cacheStrategy</span> = <span class="php-num">1</span></span>, <span> string <span class="property-name">$classNamespace</span> = <span class="php-quote">'ClassConfig\\Cache'</span></span> )</code>
+            <code><a href="source-class-ClassConfig.ClassConfig.html#251-267">register</a>( <span> string <span class="property-name">$cachePath</span> </span>, <span> int <span class="property-name">$cacheStrategy</span> = <span class="php-num">1</span></span>, <span> string <span class="property-name">$classNamespace</span> = <span class="php-quote">'ClassConfig\\Cache'</span></span> )</code>
 
             <div class="description">
                 Register the environment.
@@ -327,7 +327,7 @@ This must be called once and only once (on each request) before working with the
     <td class="name">
         <div>
             <a class="anchor pull-right" href="#_createClass">#</a>
-            <code><a href="source-class-ClassConfig.ClassConfig.html#316-369">createClass</a>( <span> string <span class="property-name">$canonicalClassName</span> </span> )</code>
+            <code><a href="source-class-ClassConfig.ClassConfig.html#276-328">createClass</a>( <span> string <span class="property-name">$canonicalClassName</span> </span> )</code>
 
             <div class="description">
                 
@@ -359,7 +359,7 @@ This must be called once and only once (on each request) before working with the
     <td class="name">
         <div>
             <a class="anchor pull-right" href="#_createInstance">#</a>
-            <code><a href="source-class-ClassConfig.ClassConfig.html#378-382">createInstance</a>( <span> string <span class="property-name">$class</span> </span> )</code>
+            <code><a href="source-class-ClassConfig.ClassConfig.html#337-341">createInstance</a>( <span> string <span class="property-name">$class</span> </span> )</code>
 
             <div class="description">
                 
@@ -593,58 +593,6 @@ This will be used as prefix to source classes.
         <div>
             <a href="#$classNamespace" class="anchor pull-right">#</a>
             <code><span class="php-keyword1">NULL</span></code>
-        </div>
-    </td>
-</tr>
-<tr id="$classmap">
-    <td class="attributes">
-        <code class="keyword">
-            protected static
-
-            string[]
-        </code>
-    </td>
-
-    <td class="name">
-        <code>
-            <a href="source-class-ClassConfig.ClassConfig.html#79" class="property-name">$classmap</a>
-        </code>
-        <div class="description">
-            A classmap of generated config files for the autoloader.
-
-                <br>
-        </div>
-    </td>
-    <td class="value">
-        <div>
-            <a href="#$classmap" class="anchor pull-right">#</a>
-            <code><span class="php-keyword1">NULL</span></code>
-        </div>
-    </td>
-</tr>
-<tr id="$classmapDirty">
-    <td class="attributes">
-        <code class="keyword">
-            protected static
-
-            bool
-        </code>
-    </td>
-
-    <td class="name">
-        <code>
-            <a href="source-class-ClassConfig.ClassConfig.html#86" class="property-name">$classmapDirty</a>
-        </code>
-        <div class="description">
-            A flag to determine that the classmap is dirty and should be written to the filesystem.
-
-                <br>
-        </div>
-    </td>
-    <td class="value">
-        <div>
-            <a href="#$classmapDirty" class="anchor pull-right">#</a>
-            <code><span class="php-keyword1">false</span></code>
         </div>
     </td>
 </tr>
