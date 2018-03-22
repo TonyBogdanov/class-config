@@ -334,9 +334,9 @@ class ClassConfig
      * @throws \ReflectionException
      * @throws ClassConfigNotRegisteredException
      */
-    public static function createInstance(string $class): AbstractConfig
+    public static function createInstance(string $class, object $owner = null): AbstractConfig
     {
         $canonicalClassName = static::createClass($class);
-        return new $canonicalClassName;
+        return new $canonicalClassName($owner);
     }
 }
