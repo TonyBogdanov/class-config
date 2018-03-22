@@ -84,73 +84,121 @@ class ClassConfigTest extends TestCase
     }
 
     /**
-     * @covers ::createClass()
-     *
+     * @param callable $warmup
+     * @param string $cacheStrategyName
+     * @param int $maxDurationMS
+     * @param int $maxOverhead
+     * @return ClassConfigTest
      * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \ReflectionException
      */
-    public function testCreateFresh()
-    {
+    protected function doTestCreate(
+        callable $warmup,
+        string $cacheStrategyName,
+        int $maxDurationMS,
+        int $maxOverhead
+    ): ClassConfigTest {
         list($cacheSamples, $cacheConfigs) = $this->prepareCaches();
 
         $this->flushCache($cacheSamples);
         $this->flushCache($cacheConfigs);
-
         $this->generateSamples(static::SAMPLES, $cacheSamples);
 
-        ClassConfig::setCachePath($cacheConfigs);
+        call_user_func($warmup, $cacheConfigs);
 
-        $classes = [];
-
-        for ($i = 0; $i < static::SAMPLES; $i++) {
-            $class = ClassConfig::createClass(static::SAMPLE_TARGET_NAMESPACE . '\\' .
-                static::SAMPLE_TARGET_SHORT_NAME . $i);
-
-            $this->assertNotContains($class, $classes, 'createClass() produces different class names for different' .
-                ' samples.');
-            $this->assertTrue(class_exists($class), 'createClass() produces names of classes that can be autoloaded.');
-
-            $classes[] = $class;
-        }
-    }
-
-    /**
-     * @covers ::createInstance()
-     * @depends testCreateFresh
-     *
-     * @throws \Doctrine\Common\Annotations\AnnotationException
-     * @throws \ReflectionException
-     */
-    public function testCreateCached()
-    {
         $durationDirect = 0;
-        $durationConfig = 0;
+        $durationInstance = 0;
 
         for ($i = 0; $i < static::SAMPLES; $i++) {
             $sample = static::SAMPLE_TARGET_NAMESPACE . '\\' . static::SAMPLE_TARGET_SHORT_NAME . $i;
-            $configClassName = ClassConfig::createClass($sample);
+
+            $start = microtime(true);
+            $config = ClassConfig::createInstance($sample);
+            $durationInstance += microtime(true) - $start;
+
+            $configClassName = get_class($config);
 
             $start = microtime(true);
             $object = new $configClassName;
             $durationDirect += microtime(true) - $start;
 
-            $start = microtime(true);
-            $config = ClassConfig::createInstance($sample);
-            $durationConfig += microtime(true) - $start;
-
             $this->assertInstanceOf(AbstractConfig::class, $config, 'createInstance() produces instances of ' .
-                AbstractConfig::class . '.');
+                AbstractConfig::class . ' (cache=' . $cacheStrategyName . ').');
             $this->assertSame(AbstractConfig::class, get_parent_class($config), 'createInstance() produces' .
-                ' instances of classes which extend from ' . AbstractConfig::class . '.');
+                ' instances of classes which extend from ' . AbstractConfig::class . ' (cache=' . $cacheStrategyName .
+                ').');
             $this->assertSame(get_class($object), get_class($config), 'createInstance() and direct instantiation' .
-                ' both create an object of the same class.');
+                ' both create an object of the same class (cache=' . $cacheStrategyName . ').');
             $this->assertNotSame($object, $config, 'createInstance() and direct instantiation create different' .
-                ' instances.');
+                ' instances (cache=' . $cacheStrategyName . ').');
         }
 
-        $this->assertLessThan(0.05, $durationConfig / static::SAMPLES, 'createInstance() completes in less than' .
-            ' 50ms (on average) for a single cached sample.');
-        $this->assertLessThan(50, $durationConfig / $durationDirect, 'createInstance()\'s overhead is less than' .
-            ' 50 times the duration of a direct instantiation.');
+        $this->assertLessThan($maxDurationMS / 1000, $durationInstance / static::SAMPLES,
+            'createInstance() completes in less than ' . $maxDurationMS . 'ms (on average) for a single' .
+            ' sample (cache=' . $cacheStrategyName . ').');
+        $this->assertLessThan($maxOverhead, $durationInstance / $durationDirect,
+            'createInstance()\'s overhead is less than ' . $maxOverhead . ' times the duration of a direct' .
+            ' instantiation (cache=' . $cacheStrategyName . ').');
+
+        $this->flushCache($cacheSamples);
+        $this->flushCache($cacheConfigs);
+
+        return $this;
+    }
+
+    /**
+     * @covers ::createInstance()
+     * @covers ::createClass()
+     *
+     * @runInSeparateProcess
+     *
+     * @throws \Doctrine\Common\Annotations\AnnotationException
+     * @throws \ReflectionException
+     */
+    public function testCreateCacheNever()
+    {
+        $this->doTestCreate(function (string $cacheConfigs) {
+            ClassConfig::register($cacheConfigs, ClassConfig::CACHE_NEVER);
+        }, 'never', 500, PHP_INT_MAX);
+    }
+
+    /**
+     * @covers ::createInstance()
+     * @covers ::createClass()
+     *
+     * @runInSeparateProcess
+     *
+     * @throws \Doctrine\Common\Annotations\AnnotationException
+     * @throws \ReflectionException
+     */
+    public function testCreateCacheValidate()
+    {
+        $this->doTestCreate(function (string $cacheConfigs) {
+            ClassConfig::register($cacheConfigs, ClassConfig::CACHE_VALIDATE);
+
+            for ($i = 0; $i < static::SAMPLES; $i++) {
+                ClassConfig::createClass(static::SAMPLE_TARGET_NAMESPACE . '\\' . static::SAMPLE_TARGET_SHORT_NAME . $i);
+            }
+        }, 'validate', 20, 200);
+    }
+
+    /**
+     * @covers ::createInstance()
+     * @covers ::createClass()
+     *
+     * @runInSeparateProcess
+     *
+     * @throws \Doctrine\Common\Annotations\AnnotationException
+     * @throws \ReflectionException
+     */
+    public function testCreateCacheAlways()
+    {
+        $this->doTestCreate(function (string $cacheConfigs) {
+            ClassConfig::register($cacheConfigs, ClassConfig::CACHE_ALWAYS);
+
+            for ($i = 0; $i < static::SAMPLES; $i++) {
+                ClassConfig::createClass(static::SAMPLE_TARGET_NAMESPACE . '\\' . static::SAMPLE_TARGET_SHORT_NAME . $i);
+            }
+        }, 'always', 10, 100);
     }
 }

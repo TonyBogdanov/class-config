@@ -1,6 +1,6 @@
 # ClassConfig
 
-[![ApiGen Docs](https://img.shields.io/badge/ApiGen-Docs-053368.svg)](https://tonybogdanov.github.io/class-config/)
+[![ApiGen Docs](https://img.shields.io/badge/ApiGen-Docs-053368.svg)](https://tonybogdanov.github.io/class-config/docs)
 
 [![Latest Stable Version](https://poser.pugx.org/tonybogdanov/class-config/v/stable?format=flat)](https://packagist.org/packages/tonybogdanov/class-config)
 [![Latest Unstable Version](https://poser.pugx.org/tonybogdanov/class-config/v/unstable?format=flat)](https://packagist.org/packages/tonybogdanov/class-config)
@@ -15,8 +15,22 @@ Per-object configuration from class annotations in PHP.
 
 ## Installation
 
-`composer require tonybogdanov/class-config`
+Install via [Composer](https://getcomposer.org):
+
+```sh
+composer require tonybogdanov/class-config
+```
+
+## Testing
+
+Run the tests:
+
+```sh
+./bin/run-tests.sh
+```
+
+[Check the Coverage](https://tonybogdanov.github.io/class-config/coverage/).
 
 ## API Docs
 
-[https://tonybogdanov.github.io/class-config](https://tonybogdanov.github.io/class-config/)
+[Check the Docs](https://tonybogdanov.github.io/class-config/docs/)

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
-bin="$(dirname "$0")/run-tests.sh"
+dir=$(dirname "$0")
 
-$bin --coverage-text
+cd "$dir/.."
+
+./bin/run-tests.sh --coverage-text

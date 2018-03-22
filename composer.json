@@ -5,8 +5,7 @@
     "require": {
         "php" : "^7.1",
         "doctrine/annotations": "1.6",
-        "nette/php-generator": "3.1",
-        "indigophp/doctrine-annotation-autoload": "^0.2.0@dev"
+        "nette/php-generator": "3.1"
     },
     "require-dev": {
         "phpunit/phpunit": "6.5.5",
@@ -28,9 +27,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "ClassConfig\\Test\\Sample\\": "cache/samples",
-            "ClassConfig\\Test\\": "tests/classes/",
-            "ClassConfig\\Cache\\": "cache/configs/"
+            "ClassConfig\\Test\\Sample\\": "cache/samples/",
+            "ClassConfig\\Test\\": "tests/classes/"
         }
     }
 }

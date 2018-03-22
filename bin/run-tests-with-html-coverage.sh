@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 
-tmp=$(mktemp -u)
-bin="$(dirname "$0")/run-tests.sh"
+dir=$(dirname "$0")
 
-$bin --coverage-html "$tmp"
+cd "$dir/.."
+
+rm -rf docs/coverage
+./bin/run-tests.sh --coverage-html "docs/coverage"
 
 # MacOS
-open "$tmp/index.html"
+open "docs/coverage/index.html"
 
 # Linux
-xdg-open "$tmp/index.html"
+xdg-open "docs/coverage/index.html"
 
 # Windows
-start "$tmp/index.html"
+start "docs/coverage/index.html"

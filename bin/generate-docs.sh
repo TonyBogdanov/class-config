@@ -4,4 +4,5 @@ dir=$(dirname "$0")
 
 cd "$dir/.."
 
-./vendor/bin/apigen generate --destination docs -- classes
+rm -rf docs/docs
+./vendor/bin/apigen generate --destination docs/docs -- classes
