@@ -47,14 +47,27 @@ class ClassConfigTest extends TestCase
     }
 
     /**
-     * @param string $cache
+     * @param string $path
      * @return ClassConfigTest
      */
-    protected function flushCache(string $cache): ClassConfigTest
+    protected function flushCache(string $path): ClassConfigTest
     {
-        foreach (glob($cache . '/*') as $path) {
-            unlink($path);
+        $path = rtrim($path, '\\/') . '/';
+        $open = opendir($path);
+
+        while (false !== ($read = readdir($open))) {
+            if ('.' === $read || '..' === $read) {
+                continue;
+            }
+            if (is_file($path . $read)) {
+                unlink($path . $read);
+            } else if (is_dir($path . $read)) {
+                static::flushCache($path . $read);
+                rmdir($path . $read);
+            }
         }
+
+        closedir($open);
         return $this;
     }
 
@@ -80,6 +93,7 @@ class ClassConfigTest extends TestCase
                 )
             );
         }
+        clearstatcache();
         return $this;
     }
 
@@ -186,7 +200,7 @@ class ClassConfigTest extends TestCase
      * @covers ::createInstance()
      * @covers ::createClass()
      *
-     * @runInSeparateProcess
+     * runInSeparateProcess
      *
      * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \ReflectionException

@@ -72,20 +72,6 @@ class ClassConfig
     protected static $classNamespace;
 
     /**
-     * A classmap of generated config files for the autoloader.
-     *
-     * @var string[]
-     */
-    protected static $classmap;
-
-    /**
-     * A flag to determine that the classmap is dirty and should be written to the filesystem.
-     *
-     * @var bool
-     */
-    protected static $classmapDirty = false;
-
-    /**
      * @param string $path
      */
     protected static function createDirectories(string $path)
@@ -237,15 +223,19 @@ class ClassConfig
             ->generateMagicIsset()
             ->generateMagicUnset();
 
-        $targetPath = static::getCachePath() . '/CC__' . str_replace('\\', '_', $classNamespace) . '_' .
-            $effectiveClassName . '.php';
+        $targetDir = static::getCachePath() . '/' . str_replace('\\', '/', $classNamespace);
+        $targetPath = $targetDir . '/' . $effectiveClassName . '.php';
+
+        static::createDirectories($targetDir);
 
         file_put_contents($targetPath, (string) $generator);
         touch($targetPath, $time);
         clearstatcache();
 
-        static::$classmapDirty = true;
-        static::$classmap[$effectiveTargetCanonicalClassName] = $targetPath;
+        // as optimization measure composer's autoloader remembers that a class does not exist on the first requested
+        // it will refuse to autoload the class even if it subsequently becomes available
+        // for this reason we need to manually load the newly generated class
+        include_once $targetPath;
 
         return $effectiveTargetCanonicalClassName;
     }
@@ -274,36 +264,6 @@ class ClassConfig
         static::$cachePath = $cachePath;
         static::$cacheStrategy = $cacheStrategy;
         static::$classNamespace = $classNamespace;
-
-        // load the classmap
-        $classmapPath = $cachePath . '/classmap.php';
-        if (static::CACHE_NEVER === $cacheStrategy) {
-            static::$classmap = [];
-        } else {
-            static::$classmap = is_file($classmapPath) ? include $classmapPath : [];
-        }
-
-        // flush the classmap if dirty on shutdown
-        register_shutdown_function(function () use ($classmapPath) {
-            if (static::$classmapDirty) {
-                file_put_contents(
-                    $classmapPath,
-                    '<?php' . PHP_EOL . PHP_EOL .
-                    '/**' . PHP_EOL .
-                    ' * THIS IS AN AUTOMATICALLY GENERATED FILE, PLEASE DO NOT MODIFY IT.' . PHP_EOL .
-                    ' * YOU MAY SAFELY DELETE THE FILE AS IT WILL BE REGENERATED ON-DEMAND.' . PHP_EOL .
-                    ' */' . PHP_EOL .
-                    'return ' . var_export(static::$classmap, true) . ';'
-                );
-            }
-        });
-
-        // autoload classes from the classmap
-        spl_autoload_register(function (string $class) {
-            if (isset(static::$classmap[$class])) {
-                include static::$classmap[$class];
-            }
-        });
     }
 
     /**
@@ -330,11 +290,10 @@ class ClassConfig
                 break;
 
             case static::CACHE_ALWAYS:
-                // only generate if not in the classmap
-                if (isset(static::$classmap[$targetCanonicalClassName])) {
+                // only generate if class does not exist
+                if (class_exists($targetCanonicalClassName)) {
                     return $targetCanonicalClassName;
                 }
-
                 $time = time();
                 break;
 
@@ -342,10 +301,10 @@ class ClassConfig
             default:
                 // validate by last modified time
                 $time = filemtime((new \ReflectionClass($canonicalClassName))->getFileName());
-
                 if (
-                    isset(static::$classmap[$targetCanonicalClassName]) &&
-                    @filemtime(static::$classmap[$targetCanonicalClassName]) === $time
+                    class_exists($targetCanonicalClassName) &&
+                    filemtime((new \ReflectionClass($canonicalClassName))->getFileName()) ===
+                    filemtime((new \ReflectionClass($targetCanonicalClassName))->getFileName())
                 ) {
                     return $targetCanonicalClassName;
                 }
