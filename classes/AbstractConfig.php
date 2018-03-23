@@ -7,6 +7,8 @@ use ClassConfig\Exceptions\MissingConfigException;
 /**
  * Class Config
  * @package ClassConfig
+ *
+ * @property null|object $___owner
  */
 abstract class AbstractConfig
 {
@@ -23,11 +25,13 @@ abstract class AbstractConfig
     /**
      * AbstractConfig constructor.
      *
+     * @param object $owner
      * @param AbstractConfig|null $parent
      * @param string|null $key
      */
-    public function __construct(AbstractConfig $parent = null, string $key = null)
+    public function __construct($owner, AbstractConfig $parent = null, string $key = null)
     {
+        $this->___owner = $owner;
         $this->___parent = $parent;
         $this->___key = $key;
     }

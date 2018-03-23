@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ClassConfigTest extends TestCase
 {
-    const SAMPLES = 1;
+    const SAMPLES = 50;
 
     const SAMPLE_NAMESPACE = 'ClassConfig\Test';
     const SAMPLE_SHORT_NAME = 'Sample';
@@ -125,15 +125,16 @@ class ClassConfigTest extends TestCase
 
         for ($i = 0; $i < static::SAMPLES; $i++) {
             $sample = static::SAMPLE_TARGET_NAMESPACE . '\\' . static::SAMPLE_TARGET_SHORT_NAME . $i;
+            $sampleInstance = new $sample;
 
             $start = microtime(true);
-            $config = ClassConfig::createInstance($sample);
+            $config = ClassConfig::createInstance($sample, $sampleInstance);
             $durationInstance += microtime(true) - $start;
 
             $configClassName = get_class($config);
 
             $start = microtime(true);
-            $object = new $configClassName;
+            $object = new $configClassName($sampleInstance);
             $durationDirect += microtime(true) - $start;
 
             $this->assertInstanceOf(AbstractConfig::class, $config, 'createInstance() produces instances of ' .
@@ -153,8 +154,6 @@ class ClassConfigTest extends TestCase
         $this->assertLessThan($maxOverhead, $durationInstance / $durationDirect,
             'createInstance()\'s overhead is less than ' . $maxOverhead . ' times the duration of a direct' .
             ' instantiation (cache=' . $cacheStrategyName . ').');
-
-        exit('OK');
 
         $this->flushCache($cacheSamples);
         $this->flushCache($cacheConfigs);

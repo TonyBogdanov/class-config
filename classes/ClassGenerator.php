@@ -20,6 +20,11 @@ class ClassGenerator
     protected $class;
 
     /**
+     * @var string
+     */
+    protected $ownerCanonicalClassName;
+
+    /**
      * @param string $value
      * @return string
      */
@@ -68,10 +73,16 @@ class ClassGenerator
      * @param Config $annotation
      * @param string $className
      * @param string $classNamespace
+     * @param string $ownerCanonicalClassName
      */
-    public function __construct(Config $annotation, string $className, string $classNamespace)
-    {
+    public function __construct(
+        Config $annotation,
+        string $className,
+        string $classNamespace,
+        string $ownerCanonicalClassName
+    ) {
         $this->class = (new PhpNamespace($classNamespace))->addClass($className);
+        $this->ownerCanonicalClassName = $ownerCanonicalClassName;
     }
 
     /**
@@ -89,6 +100,21 @@ class ClassGenerator
             ->addComment(
                 'THIS IS AN AUTOMATICALLY GENERATED FILE, PLEASE DO NOT MODIFY IT.' . PHP_EOL .
                 'YOU MAY SAFELY DELETE THE FILE AS IT WILL BE REGENERATED ON-DEMAND.'
+            );
+
+        $this->class
+            ->addProperty('___owner')
+            ->addComment(
+                '@var ' . $this->getCommentTypeHint($this->ownerCanonicalClassName)
+            )->setVisibility('private');
+
+        $this->class
+            ->addMethod('end')
+            ->addComment(
+                '@return ' . $this->getCommentTypeHint($this->ownerCanonicalClassName)
+            )->setReturnType($this->getTypeHint($this->ownerCanonicalClassName))
+            ->setBody(
+                'return $this->___owner;'
             );
 
         return '<?php' . PHP_EOL . PHP_EOL . (string) $this->class->getNamespace();
@@ -411,8 +437,8 @@ class ClassGenerator
             )->setReturnType($this->getTypeHint($type))
             ->setBody(
                 'if (!isset($this->__' . $name . '__[0])) {' . PHP_EOL .
-                '    $this->__' . $name . '__[0] = new ' . $this->getCommentTypeHint($type) . '($this, \'' . $name .
-                '\');' . PHP_EOL .
+                '    $this->__' . $name . '__[0] = new ' . $this->getCommentTypeHint($type) .
+                '($this->___owner, $this, \'' . $name . '\');' . PHP_EOL .
                 '}' . PHP_EOL .
                 'return $this->__' . $name . '__[0];'
             );

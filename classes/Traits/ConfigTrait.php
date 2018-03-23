@@ -24,7 +24,7 @@ trait ConfigTrait
     public function config(): AbstractConfig
     {
         if (!isset($this->__config__)) {
-            $this->__config__ = ClassConfig::createInstance(get_class($this));
+            $this->__config__ = ClassConfig::createInstance(get_class($this), $this);
         }
         return $this->__config__;
     }

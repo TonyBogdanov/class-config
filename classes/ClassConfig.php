@@ -130,6 +130,7 @@ class ClassConfig
      * @param Config $annotation
      * @param string $className
      * @param string $classNamespace
+     * @param string $canonicalClassName
      * @param string $targetClassNamespace
      * @param string $targetCanonicalClassName
      * @param int $time
@@ -140,6 +141,7 @@ class ClassConfig
         Config $annotation,
         string $className,
         string $classNamespace,
+        string $canonicalClassName,
         string $targetClassNamespace,
         string $targetCanonicalClassName,
         int $time,
@@ -151,7 +153,7 @@ class ClassConfig
         $effectiveClassName = $className . $suffix;
         $effectiveTargetCanonicalClassName = $targetCanonicalClassName . $suffix;
 
-        $generator = new ClassGenerator($annotation, $effectiveClassName, $targetClassNamespace);
+        $generator = new ClassGenerator($annotation, $effectiveClassName, $targetClassNamespace, $canonicalClassName);
 
         /**
          * @var string $key
@@ -196,6 +198,7 @@ class ClassConfig
                         $entry,
                         $className,
                         $classNamespace,
+                        $canonicalClassName,
                         $targetClassNamespace,
                         $targetCanonicalClassName,
                         $time,
@@ -321,6 +324,7 @@ class ClassConfig
             $annotation,
             $className,
             $classNamespace,
+            $canonicalClassName,
             $targetClassNamespace,
             $targetCanonicalClassName,
             $time
@@ -329,12 +333,13 @@ class ClassConfig
 
     /**
      * @param string $class
+     * @param object $owner
      * @return AbstractConfig
      * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \ReflectionException
      * @throws ClassConfigNotRegisteredException
      */
-    public static function createInstance(string $class, object $owner = null): AbstractConfig
+    public static function createInstance(string $class, $owner): AbstractConfig
     {
         $canonicalClassName = static::createClass($class);
         return new $canonicalClassName($owner);
