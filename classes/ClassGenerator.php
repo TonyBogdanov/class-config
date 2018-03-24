@@ -48,10 +48,14 @@ class ClassGenerator
      */
     protected function getCommentTypeHint(string $type)
     {
-        $brackets = '[]' === substr($type, -2) ? '[]' : '';
-        $type = $brackets ? substr($type, 0, -2) : $type;
+        if (preg_match('/^(.+?)((?:\[\])+)$/', $type, $match)) {
+            $type = $match[1];
+            $brackets = $match[2];
+        } else {
+            $brackets = '';
+        }
 
-        if (!in_array($type, ['string', 'int', 'float', 'bool'], true)) {
+        if (!in_array($type, ['string', 'int', 'float', 'bool', 'mixed'], true)) {
             $this->class->getNamespace()->addUse($type);
             return $this->class->getNamespace()->unresolveName($type) . $brackets;
         }
@@ -103,18 +107,14 @@ class ClassGenerator
             );
 
         $this->class
-            ->addProperty('___owner')
-            ->addComment(
-                '@var ' . $this->getCommentTypeHint($this->ownerCanonicalClassName)
-            )->setVisibility('protected');
-
-        $this->class
             ->addMethod('end')
             ->addComment(
                 '@return ' . $this->getCommentTypeHint($this->ownerCanonicalClassName)
             )->setReturnType($this->getTypeHint($this->ownerCanonicalClassName))
             ->setBody(
-                'return $this->___owner;'
+                '/** @var ' . $this->getCommentTypeHint($this->ownerCanonicalClassName) . ' $owner */' . PHP_EOL .
+                '$owner = $this->___owner;' . PHP_EOL .
+                'return $owner;'
             );
 
         return '<?php' . PHP_EOL . PHP_EOL . (string) $this->class->getNamespace();
@@ -131,7 +131,7 @@ class ClassGenerator
         $this->class
             ->addProperty('__' . $name . '__', [null, $default])
             ->addComment(
-                '@var ' . $this->getCommentTypeHint($type) . '[]'
+                '@var ' . $this->getCommentTypeHint($type . '[]')
             )->setVisibility('private');
         return $this;
     }

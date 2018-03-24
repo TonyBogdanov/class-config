@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ClassConfigTest extends TestCase
 {
-    const SAMPLES = 50;
+    const SAMPLES = 1;
 
     const SAMPLE_NAMESPACE = 'ClassConfig\Test';
     const SAMPLE_SHORT_NAME = 'Sample';
@@ -155,8 +155,8 @@ class ClassConfigTest extends TestCase
             'createInstance()\'s overhead is less than ' . $maxOverhead . ' times the duration of a direct' .
             ' instantiation (cache=' . $cacheStrategyName . ').');
 
-        $this->flushCache($cacheSamples);
-        $this->flushCache($cacheConfigs);
+//        $this->flushCache($cacheSamples);
+//        $this->flushCache($cacheConfigs);
 
         return $this;
     }

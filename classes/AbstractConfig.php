@@ -7,11 +7,14 @@ use ClassConfig\Exceptions\MissingConfigException;
 /**
  * Class Config
  * @package ClassConfig
- *
- * @property object $___owner
  */
 abstract class AbstractConfig
 {
+    /**
+     * @var object
+     */
+    protected $___owner;
+
     /**
      * @var null|AbstractConfig
      */

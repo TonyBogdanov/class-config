@@ -176,7 +176,7 @@ class ClassConfig
                     break;
 
                 case $entry instanceof ConfigArray:
-                    $type = $entry->value->getType();
+                    $type = isset($entry->value) ? $entry->value->getType() : 'mixed';
                     $generator
                         ->generateProperty($key, $type . '[]')
                         ->generateArrayGet($key, $type . '[]')
