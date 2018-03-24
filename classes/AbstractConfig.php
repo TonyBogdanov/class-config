@@ -8,7 +8,7 @@ use ClassConfig\Exceptions\MissingConfigException;
  * Class Config
  * @package ClassConfig
  *
- * @property null|object $___owner
+ * @property object $___owner
  */
 abstract class AbstractConfig
 {

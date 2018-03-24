@@ -106,7 +106,7 @@ class ClassGenerator
             ->addProperty('___owner')
             ->addComment(
                 '@var ' . $this->getCommentTypeHint($this->ownerCanonicalClassName)
-            )->setVisibility('private');
+            )->setVisibility('protected');
 
         $this->class
             ->addMethod('end')
