@@ -11,7 +11,7 @@ namespace ClassConfig\Annotation;
 class ConfigArray extends Config
 {
     /**
-     * @var null|\ClassConfig\Annotation\ConfigEntryTypeHintInterface
+     * @var \ClassConfig\Annotation\ConfigEntryTypeHintInterface
      */
     public $value;
 }

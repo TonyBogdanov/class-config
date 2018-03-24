@@ -39,7 +39,15 @@ class ClassGenerator
      */
     protected function getTypeHint(string $type)
     {
-        return '[]' === substr($type, -2) ? 'array' : $type;
+        if ('[]' === substr($type, -2)) {
+            return 'array';
+        }
+
+        if ('mixed' === $type) {
+            return '';
+        }
+
+        return $type;
     }
 
     /**
@@ -150,7 +158,10 @@ class ClassGenerator
             )->setReturnType($this->getTypeHint($type))
             ->setReturnNullable(true)
             ->setBody(
-                'return isset($this->__' . $name . '__[0]) ? $this->__' . $name . '__[0] : $this->__' . $name . '__[1];'
+                'if (isset($this->__' . $name . '__[0])) {' . PHP_EOL .
+                '    return $this->__' . $name . '__[0];' . PHP_EOL .
+                '}' . PHP_EOL .
+                'return $this->__' . $name . '__[1];'
             );
         return $this;
     }
@@ -221,11 +232,14 @@ class ClassGenerator
         $this->class
             ->addMethod(static::camelCase('get_' . $name))
             ->addComment(
-                '@return ' . $this->getCommentTypeHint($type)
+                '@return null|' . $this->getCommentTypeHint($type)
             )->setReturnType($this->getTypeHint($type))
             ->setReturnNullable(true)
             ->setBody(
-                'return isset($this->__' . $name . '__[0]) ? $this->__' . $name . '__[0] : null;'
+                'if (isset($this->__' . $name . '__[0])) {' . PHP_EOL .
+                '    return $this->__' . $name . '__[0];' . PHP_EOL .
+                '}' . PHP_EOL .
+                'return null;'
             );
         return $this;
     }
@@ -293,11 +307,8 @@ class ClassGenerator
                 '@return ' . $this->class->getName()
             )->setReturnType($this->getCanonicalClassName())
             ->setBody(
-                'if (' . PHP_EOL .
-                '    0 > $index ||' . PHP_EOL .
-                '    (0 < $index && (!isset($this->__' . $name . '__[0]) || empty($this->__' . $name .
-                '__[0])) || $index > count($this->__' . $name . '__[0]))' . PHP_EOL .
-                ') {' . PHP_EOL .
+                'if (0 > $index || (0 < $index && (!isset($this->__' . $name . '__[0]) ||' . PHP_EOL .
+                '    empty($this->__' . $name . '__[0])) || $index > count($this->__' . $name . '__[0]))) {' . PHP_EOL .
                 '    return $this;' . PHP_EOL .
                 '}' . PHP_EOL . PHP_EOL .
                 'if (!isset($this->__' . $name . '__[0])) {' . PHP_EOL .
