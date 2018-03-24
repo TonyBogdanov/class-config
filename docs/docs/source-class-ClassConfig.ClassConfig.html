@@ -252,8 +252,8 @@
 </span><span class="l" id="line-178">                <span class="php-keyword1">case</span> <span class="php-var">$entry</span> <span class="php-keyword1">instanceof</span> ConfigArray:
 </span><span class="l" id="line-179">                    <span class="php-var">$type</span> = <span class="php-keyword1">isset</span>(<span class="php-var">$entry</span>-&gt;value) ? <span class="php-var">$entry</span>-&gt;value-&gt;<span class="php-keyword2">getType</span>() : <span class="php-quote">'mixed'</span>;
 </span><span class="l" id="line-180">                    <span class="php-var">$generator</span>
-</span><span class="l" id="line-181">                        -&gt;generateProperty(<span class="php-var">$key</span>, <span class="php-var">$type</span> . <span class="php-quote">'[]'</span>)
-</span><span class="l" id="line-182">                        -&gt;generateArrayGet(<span class="php-var">$key</span>, <span class="php-var">$type</span> . <span class="php-quote">'[]'</span>)
+</span><span class="l" id="line-181">                        -&gt;generateProperty(<span class="php-var">$key</span>, <span class="php-var">$type</span> . <span class="php-quote">'[]'</span>, <span class="php-var">$entry</span>-&gt;<span class="php-keyword1">default</span>)
+</span><span class="l" id="line-182">                        -&gt;generateGet(<span class="php-var">$key</span>, <span class="php-var">$type</span> . <span class="php-quote">'[]'</span>)
 </span><span class="l" id="line-183">                        -&gt;generateArraySet(<span class="php-var">$key</span>, <span class="php-var">$type</span> . <span class="php-quote">'[]'</span>)
 </span><span class="l" id="line-184">                        -&gt;generateArrayGetAt(<span class="php-var">$key</span>, <span class="php-var">$type</span>)
 </span><span class="l" id="line-185">                        -&gt;generateArraySetAt(<span class="php-var">$key</span>, <span class="php-var">$type</span>)

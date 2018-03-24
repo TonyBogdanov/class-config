@@ -20,7 +20,7 @@ use ClassConfig\Annotation\ConfigString;
  *     "empty_float":       @ConfigFloat(),
  *     "empty_boolean":     @ConfigBoolean(),
  *     "empty_object":      @ConfigObject(class="\DateTime"),
- *     "mixed_array":       @ConfigArray(),
+ *     "array_of_mixed":    @ConfigArray(),
  *     "array_of_strings":  @ConfigArray(@ConfigString()),
  *     "array_of_integers": @ConfigArray(@ConfigInteger()),
  *     "array_of_floats":   @ConfigArray(@ConfigFloat()),
@@ -39,7 +39,7 @@ use ClassConfig\Annotation\ConfigString;
  *     }),
  *     "another_config":    @Config({
  *          "deep_object":              @ConfigObject(class="\DateTime"),
- *          "deep_array_of_strings":    @ConfigArray(@ConfigString())
+ *          "deep_array_of_strings":    @ConfigArray(@ConfigString(), default={"hello", "foo": "bar"})
  *     })
  * })
  */

@@ -227,28 +227,6 @@ class ClassGenerator
      * @param string $type
      * @return ClassGenerator
      */
-    public function generateArrayGet(string $name, string $type): ClassGenerator
-    {
-        $this->class
-            ->addMethod(static::camelCase('get_' . $name))
-            ->addComment(
-                '@return null|' . $this->getCommentTypeHint($type)
-            )->setReturnType($this->getTypeHint($type))
-            ->setReturnNullable(true)
-            ->setBody(
-                'if (isset($this->__' . $name . '__[0])) {' . PHP_EOL .
-                '    return $this->__' . $name . '__[0];' . PHP_EOL .
-                '}' . PHP_EOL .
-                'return null;'
-            );
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @param string $type
-     * @return ClassGenerator
-     */
     public function generateArraySet(string $name, string $type): ClassGenerator
     {
         $this->class

@@ -14,4 +14,9 @@ class ConfigArray extends Config
      * @var \ClassConfig\Annotation\ConfigEntryTypeHintInterface
      */
     public $value;
+
+    /**
+     * @var array
+     */
+    public $default;
 }
