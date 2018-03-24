@@ -227,7 +227,7 @@ class ClassGenerator
      * @param string $type
      * @return ClassGenerator
      */
-    public function generateArraySet(string $name, string $type): ClassGenerator
+    public function generateListSet(string $name, string $type): ClassGenerator
     {
         $this->class
             ->addMethod(static::camelCase('set_' . $name))
@@ -251,7 +251,7 @@ class ClassGenerator
      * @param string $type
      * @return ClassGenerator
      */
-    public function generateArrayGetAt(string $name, string $type): ClassGenerator
+    public function generateListGetAt(string $name, string $type): ClassGenerator
     {
         $this->class
             ->addMethod(static::camelCase('get_' . $name . '_at'))
@@ -275,7 +275,7 @@ class ClassGenerator
      * @param string $type
      * @return ClassGenerator
      */
-    public function generateArraySetAt(string $name, string $type): ClassGenerator
+    public function generateListSetAt(string $name, string $type): ClassGenerator
     {
         $method = $this->class
             ->addMethod(static::camelCase('set_' . $name . '_at'))
@@ -304,28 +304,10 @@ class ClassGenerator
 
     /**
      * @param string $name
-     * @return ClassGenerator
-     */
-    public function generateArrayClear(string $name): ClassGenerator
-    {
-        $this->class
-            ->addMethod(static::camelCase('clear_' . $name))
-            ->addComment(
-                '@return ' . $this->class->getName()
-            )->setReturnType($this->getCanonicalClassName())
-            ->setBody(
-                'unset($this->__' . $name . '__[0]);' . PHP_EOL .
-                'return $this;'
-            );
-        return $this;
-    }
-
-    /**
-     * @param string $name
      * @param string $type
      * @return ClassGenerator
      */
-    public function generateArrayPush(string $name, string $type): ClassGenerator
+    public function generateListPush(string $name, string $type): ClassGenerator
     {
         $this->class
             ->addMethod(static::camelCase('push_' . $name))
@@ -349,7 +331,7 @@ class ClassGenerator
      * @param string $type
      * @return ClassGenerator
      */
-    public function generateArrayUnshift(string $name, string $type): ClassGenerator
+    public function generateListUnshift(string $name, string $type): ClassGenerator
     {
         $this->class
             ->addMethod(static::camelCase('unshift_' . $name))
@@ -365,6 +347,81 @@ class ClassGenerator
                 'return $this;'
             )->addParameter('value')
             ->setTypeHint($this->getTypeHint($type));
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string $type
+     * @return ClassGenerator
+     */
+    public function generateMapSet(string $name, string $type): ClassGenerator
+    {
+        $this->class
+            ->addMethod(static::camelCase('set_' . $name))
+            ->addComment(
+                '@param ' . $this->getCommentTypeHint($type) . ' $values' . PHP_EOL .
+                '@return ' . $this->class->getName()
+            )->setReturnType($this->getCanonicalClassName())
+            ->setBody(
+                '$this->' . static::camelCase('clear_' . $name) . '();' . PHP_EOL .
+                'foreach ($values as $key => $value) {' . PHP_EOL .
+                '    $this->' . static::camelCase('set_' . $name . '_at') . '($key, $value);' . PHP_EOL .
+                '}' . PHP_EOL .
+                'return $this;'
+            )->addParameter('values')
+            ->setTypeHint($this->getTypeHint($type));
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string $type
+     * @return ClassGenerator
+     */
+    public function generateMapGetAt(string $name, string $type): ClassGenerator
+    {
+        $this->class
+            ->addMethod(static::camelCase('get_' . $name . '_at'))
+            ->addComment(
+                '@param mixed $key' . PHP_EOL .
+                '@return ' . $this->getCommentTypeHint($type)
+            )->setReturnType($this->getTypeHint($type))
+            ->setReturnNullable(true)
+            ->setBody(
+                'if (isset($this->__' . $name . '__[0]) && array_key_exists($key, $this->__' . $name . '__[0])) {' .
+                PHP_EOL . '    return $this->__' . $name . '__[0][$key];' . PHP_EOL .
+                '}' . PHP_EOL .
+                'return null;'
+            )->addParameter('key');
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string $type
+     * @return ClassGenerator
+     */
+    public function generateMapSetAt(string $name, string $type): ClassGenerator
+    {
+        $method = $this->class
+            ->addMethod(static::camelCase('set_' . $name . '_at'))
+            ->addComment(
+                '@param mixed $key' . PHP_EOL .
+                '@param ' . $this->getCommentTypeHint($type) . ' $value' . PHP_EOL .
+                '@return ' . $this->class->getName()
+            )->setReturnType($this->getCanonicalClassName())
+            ->setBody(
+                'if (!isset($this->__' . $name . '__[0])) {' . PHP_EOL .
+                '    $this->__' . $name . '__[0] = [];' . PHP_EOL .
+                '}' . PHP_EOL . PHP_EOL .
+                '$this->__' . $name . '__[0][$key] = $value;' . PHP_EOL .
+                'return $this;'
+            );
+
+        $method->addParameter('key');
+        $method->addParameter('value')->setTypeHint($this->getTypeHint($type));
+
         return $this;
     }
 
@@ -408,6 +465,24 @@ class ClassGenerator
                 '    return null;' . PHP_EOL .
                 '}' . PHP_EOL .
                 'return array_shift($this->__' . $name . '__[0]);'
+            );
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return ClassGenerator
+     */
+    public function generateArrayClear(string $name): ClassGenerator
+    {
+        $this->class
+            ->addMethod(static::camelCase('clear_' . $name))
+            ->addComment(
+                '@return ' . $this->class->getName()
+            )->setReturnType($this->getCanonicalClassName())
+            ->setBody(
+                'unset($this->__' . $name . '__[0]);' . PHP_EOL .
+                'return $this;'
             );
         return $this;
     }

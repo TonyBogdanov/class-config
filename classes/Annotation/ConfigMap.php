@@ -3,12 +3,12 @@
 namespace ClassConfig\Annotation;
 
 /**
- * Class ConfigArray
+ * Class ConfigMap
  * @package ClassConfig\Annotation
  *
  * @Annotation
  */
-class ConfigArray extends Config
+class ConfigMap extends Config
 {
     /**
      * @var \ClassConfig\Annotation\ConfigEntryTypeHintInterface

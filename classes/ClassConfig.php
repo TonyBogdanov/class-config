@@ -3,11 +3,12 @@
 namespace ClassConfig;
 
 use ClassConfig\Annotation\Config;
-use ClassConfig\Annotation\ConfigArray;
+use ClassConfig\Annotation\ConfigList;
 use ClassConfig\Annotation\ConfigBoolean;
 use ClassConfig\Annotation\ConfigEntryInterface;
 use ClassConfig\Annotation\ConfigFloat;
 use ClassConfig\Annotation\ConfigInteger;
+use ClassConfig\Annotation\ConfigMap;
 use ClassConfig\Annotation\ConfigObject;
 use ClassConfig\Annotation\ConfigString;
 use ClassConfig\Exceptions\ClassConfigAlreadyRegisteredException;
@@ -175,19 +176,35 @@ class ClassConfig
                         ->generateUnset($key);
                     break;
 
-                case $entry instanceof ConfigArray:
+                case $entry instanceof ConfigList:
+                    $type = isset($entry->value) ? $entry->value->getType() : 'mixed';
+                    $generator
+                        ->generateProperty($key, $type . '[]', isset($entry->default) ?
+                            array_values($entry->default) : null)
+                        ->generateGet($key, $type . '[]')
+                        ->generateListSet($key, $type . '[]')
+                        ->generateListGetAt($key, $type)
+                        ->generateListSetAt($key, $type)
+                        ->generateListPush($key, $type)
+                        ->generateListUnshift($key, $type)
+                        ->generateArrayPop($key, $type)
+                        ->generateArrayShift($key, $type)
+                        ->generateArrayClear($key)
+                        ->generateIsset($key)
+                        ->generateUnset($key);
+                    break;
+
+                case $entry instanceof ConfigMap:
                     $type = isset($entry->value) ? $entry->value->getType() : 'mixed';
                     $generator
                         ->generateProperty($key, $type . '[]', $entry->default)
                         ->generateGet($key, $type . '[]')
-                        ->generateArraySet($key, $type . '[]')
-                        ->generateArrayGetAt($key, $type)
-                        ->generateArraySetAt($key, $type)
-                        ->generateArrayClear($key)
-                        ->generateArrayPush($key, $type)
-                        ->generateArrayUnshift($key, $type)
+                        ->generateMapSet($key, $type . '[]')
+                        ->generateMapGetAt($key, $type)
+                        ->generateMapSetAt($key, $type)
                         ->generateArrayPop($key, $type)
                         ->generateArrayShift($key, $type)
+                        ->generateArrayClear($key)
                         ->generateIsset($key)
                         ->generateUnset($key);
                     break;
