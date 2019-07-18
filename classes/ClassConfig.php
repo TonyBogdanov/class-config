@@ -249,7 +249,7 @@ class ClassConfig
         static::createDirectories($targetDir);
 
         file_put_contents($targetPath, (string) $generator);
-        touch($targetPath, $time);
+        @touch($targetPath, $time);
         clearstatcache();
 
         // as optimization measure composer's autoloader remembers that a class does not exist on the first requested
